@@ -2,8 +2,8 @@ import sqlite3
 
 
 class DB:
-    def __init__(self):
-        conn = sqlite3.connect('news.db', check_same_thread=False)
+    def __init__(self, name):
+        conn = sqlite3.connect(name, check_same_thread=False)
         self.conn = conn
 
     def get_connection(self):
@@ -48,9 +48,9 @@ class UserModel:
         rows = cursor.fetchall()
         return rows
 
-    def delete(self, news_id):
+    def delete(self, arch_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM users WHERE id = ?''', (str(news_id),))
+        cursor.execute('''DELETE FROM archives WHERE id = ?''', (str(arch_id),))
         cursor.close()
         self.connection.commit()
 
@@ -80,30 +80,30 @@ class Archives:
 
     def insert(self, user_id, title, url):
         cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO news 
+        cursor.execute('''INSERT INTO archives 
                           (user_id, title, url) 
                           VALUES (?,?,?)''', (str(user_id), title, url))
         cursor.close()
         self.connection.commit()
 
-    def get(self, news_id):
+    def get(self, arch_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM news WHERE id = ?", (str(news_id),))
+        cursor.execute("SELECT * FROM archives WHERE id = ?", (str(arch_id),))
         row = cursor.fetchone()
         return row
 
     def get_all(self, user_id=None):
         cursor = self.connection.cursor()
         if user_id:
-            cursor.execute("SELECT * FROM news WHERE user_id = ?",
+            cursor.execute("SELECT * FROM archives WHERE user_id = ?",
                            (str(user_id),))
         else:
-            cursor.execute("SELECT * FROM news")
+            cursor.execute("SELECT * FROM archives")
         rows = cursor.fetchall()
         return rows
 
-    def delete(self, news_id):
+    def delete(self, arch_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM news WHERE id = ?''', (str(news_id),))
+        cursor.execute('''DELETE FROM archives WHERE id = ?''', (str(arch_id),))
         cursor.close()
         self.connection.commit()
