@@ -1,4 +1,7 @@
 import sqlite3
+from flask import render_template, make_response, request
+from flask_restful import Resource
+
 
 
 class DB:
@@ -78,17 +81,17 @@ class Archives:
         cursor.close()
         self.connection.commit()
 
-    def insert(self, user_id, title, url):
+    def insert(self, url, user_id=None,):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO archives 
-                          (user_id, title, url) 
-                          VALUES (?,?,?)''', (str(user_id), title, url))
+                          (user_id, url) 
+                          VALUES (?,?)''', (str(user_id), url))
         cursor.close()
         self.connection.commit()
 
-    def get(self, arch_id):
+    def get(self, arch_url):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM archives WHERE id = ?", (str(arch_id),))
+        cursor.execute("SELECT * FROM archives WHERE url = ?", (arch_url,))
         row = cursor.fetchone()
         return row
 
@@ -107,3 +110,26 @@ class Archives:
         cursor.execute('''DELETE FROM archives WHERE id = ?''', (str(arch_id),))
         cursor.close()
         self.connection.commit()
+
+
+class Archive(Resource):
+    def get(self, url):
+        arch_url = Archives(db.get_connection()).get(url)
+        return make_response(render_template("Download_template.html", url=arch_url))
+
+    def delete(self, arch_id):
+        Archives(db.get_connection()).delete(arch_id)
+
+
+class MakeArchive(Resource):
+    def get(self):
+        return make_response(render_template("Make_Archive.html"))
+
+    def post(self):
+        f = request.files['file'].read()
+        with open("info.txt", "wb") as file:
+            file.write(f)
+        Archives(db.get_connection()).insert("D")
+
+
+db = DB("bd.sqlite")
