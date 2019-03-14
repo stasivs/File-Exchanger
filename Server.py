@@ -10,8 +10,9 @@ api.add_resource(MakeArchive, '/')
 api.add_resource(Login, "/login")
 api.add_resource(Registration, "/registration")
 api.add_resource(Logout, "/logout")
+api.add_resource(MyArchives, "/<string:username>/archives")
 
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 if __name__ == "__main__":
-    app.run("127.0.0.1", 8080, debug=True)
+    app.run("192.168.0.100", 8080, debug=True)

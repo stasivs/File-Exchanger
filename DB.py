@@ -2,8 +2,7 @@ import sqlite3
 from Tools import *
 from flask import render_template, make_response, request, redirect
 from flask import session
-from flask_restful import Resource
-import os
+from flask_restful import Resource, abort
 
 
 class DB:
@@ -77,17 +76,17 @@ class Archives:
         cursor.execute('''CREATE TABLE IF NOT EXISTS archives 
                             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                              title VARCHAR(100),
-                             url VARCHAR(100),
-                             user_id INTEGER
+                             url VARCHAR(25),
+                             user_name VARCHAR(100)
                              )''')
         cursor.close()
         self.connection.commit()
 
-    def insert(self, url, user_id=None,):
+    def insert(self, url, user_name=None,):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO archives 
-                          (user_id, url) 
-                          VALUES (?,?)''', (str(user_id), url))
+                          (user_name, url) 
+                          VALUES (?,?)''', (str(user_name), url))
         cursor.close()
         self.connection.commit()
 
@@ -97,13 +96,10 @@ class Archives:
         row = cursor.fetchone()
         return row
 
-    def get_all(self, user_id=None):
+    def get_all(self, user_name):
         cursor = self.connection.cursor()
-        if user_id:
-            cursor.execute("SELECT * FROM archives WHERE user_id = ?",
-                           (str(user_id),))
-        else:
-            cursor.execute("SELECT * FROM archives")
+        cursor.execute("SELECT * FROM archives WHERE user_name = ?",
+                       (str(user_name),))
         rows = cursor.fetchall()
         return rows
 
@@ -114,9 +110,14 @@ class Archives:
         self.connection.commit()
 
 
+def abort_if_arch_not_found(url):
+    if not Archives(db.get_connection()).get(url):
+        abort(404, message="Hello!")
+
+
 class Archive(Resource):
     def get(self, url):
-        arch_url = Archives(db.get_connection()).get(url)
+        abort_if_arch_not_found(url)
         return make_response(render_template("Download_template.html", url=url + ".txt"))
 
     def delete(self, arch_id):
@@ -132,7 +133,10 @@ class MakeArchive(Resource):
         url = str(create_url())
         with open("Archives/" + url + ".txt", "wb") as file:
             file.write(f)
-        Archives(db.get_connection()).insert(url)
+        if 'username' in session:
+            Archives(db.get_connection()).insert(url, session['username'])
+        else:
+            Archives(db.get_connection()).insert(url)
         return make_response(render_template("url.html", url=url))
 
 
@@ -171,6 +175,16 @@ class Logout(Resource):
     def get(self):
         session.pop('username', 0)
         return redirect("/")
+
+
+class MyArchives(Resource):
+    def get(self, username):
+        if 'username' in session and session['username'] == username.strip():
+            archive_list = Archives(db.get_connection()).get_all(username.strip())
+            return make_response(render_template("User_Archives.html",
+                                                 archive_list=archive_list))
+        else:
+            return redirect("/")
 
 
 db = DB("DB.db")
