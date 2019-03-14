@@ -11,7 +11,7 @@
     <!-- Begin page content -->
     <main role="main" class="container">
         {% block content %}
-        <a href="{{ url }}" download><p>Скачать</p></a>
+        <a href="{{ url_for('static', filename=url) }}" download>Скачать</a>
         {% endblock %}
     </main>
   </body>

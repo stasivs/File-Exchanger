@@ -1,7 +1,8 @@
 import sqlite3
-from flask import render_template, make_response, request
+from Tools import *
+from flask import render_template, make_response, request, send_from_directory
 from flask_restful import Resource
-
+import os
 
 
 class DB:
@@ -115,7 +116,7 @@ class Archives:
 class Archive(Resource):
     def get(self, url):
         arch_url = Archives(db.get_connection()).get(url)
-        return make_response(render_template("Download_template.html", url=arch_url))
+        return make_response(render_template("Download_template.html", url=url + ".txt"))
 
     def delete(self, arch_id):
         Archives(db.get_connection()).delete(arch_id)
@@ -127,9 +128,28 @@ class MakeArchive(Resource):
 
     def post(self):
         f = request.files['file'].read()
-        with open("info.txt", "wb") as file:
+        url = str(create_url())
+        with open("Archives/" + url + ".txt", "wb") as file:
             file.write(f)
-        Archives(db.get_connection()).insert("D")
+        Archives(db.get_connection()).insert(url)
+        return make_response(render_template("url.html", url=url))
 
 
-db = DB("bd.sqlite")
+class Login(Resource):
+    def get(self):
+        form = LoginForm()
+        return make_response(render_template("Login.html", form=form))
+
+    def post(self):
+        return make_response(render_template("Make_Archive.html"))
+
+
+class Registration(Resource):
+    def get(self):
+        return make_response(render_template("Registration.html"))
+
+    def post(self):
+        return make_response(render_template("Make_Archive.html"))
+
+
+db = DB("DB.db")
