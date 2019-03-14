@@ -8,6 +8,8 @@ api = Api(app)
 api.add_resource(Archive, '/<string:url>')
 api.add_resource(MakeArchive, '/')
 api.add_resource(Login, "/login")
+api.add_resource(Registration, "/registration")
+api.add_resource(Logout, "/logout")
 
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 

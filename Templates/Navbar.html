@@ -20,13 +20,23 @@
                 Создать новый архив
             </p>
         </a>
+        {% if "username" in session %}
+            <a href="/logout" class="navbar-brand">{{session['username']}}</a>
 
-        <a href="#">
+        {% else %}
+
+        <a href="/login">
             <p>
-                {{ login_or_quit }}
+                Зайти
             </p>
         </a>
 
+        <a href="/registration">
+            <p>
+                Зарегистрироваться
+            </p>
+        </a>
+        {% endif %}
       </nav>
     </header>
     <!-- Begin page content -->

@@ -1,6 +1,7 @@
 import sqlite3
 from Tools import *
-from flask import render_template, make_response, request, send_from_directory
+from flask import render_template, make_response, request, redirect
+from flask import session
 from flask_restful import Resource
 import os
 
@@ -42,7 +43,7 @@ class UserModel:
 
     def get(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE id = ?", (str(user_id),))
+        cursor.execute("SELECT * FROM users WHERE user_name = ?", (str(user_id),))
         row = cursor.fetchone()
         return row
 
@@ -141,15 +142,35 @@ class Login(Resource):
         return make_response(render_template("Login.html", form=form))
 
     def post(self):
-        return make_response(render_template("Make_Archive.html"))
+        form = LoginForm()
+        username = form.username.data
+        password = form.password.data
+        temp = UserModel(db.get_connection()).get(username)
+        print(temp)
+        if temp:
+            session['username'] = username
+            return make_response(render_template("Make_Archive.html"))
+        else:
+            return "B"
 
 
 class Registration(Resource):
     def get(self):
-        return make_response(render_template("Registration.html"))
+        form = LoginForm()
+        return make_response(render_template("Registration.html", form=form))
 
     def post(self):
-        return make_response(render_template("Make_Archive.html"))
+        form = LoginForm()
+        username = form.username.data
+        password = form.password.data
+        UserModel(db.get_connection()).insert(username, password)
+        return redirect("/")
+
+
+class Logout(Resource):
+    def get(self):
+        session.pop('username', 0)
+        return redirect("/")
 
 
 db = DB("DB.db")
