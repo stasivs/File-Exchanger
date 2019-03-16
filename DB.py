@@ -67,16 +67,17 @@ class Archives:
                              title VARCHAR(50),
                              info VARCHAR(1000),
                              url VARCHAR(25),
-                             user_name VARCHAR(100)
+                             format VARCHAR(20),
+                             user_name VARCHAR(20)
                              )''')
         cursor.close()
         self.connection.commit()
 
-    def insert(self, title, info, url, user_name=None,):
+    def insert(self, title, info, url, format, user_name=None,):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO archives 
-                          (user_name, title, info, url) 
-                          VALUES (?,?,?,?)''', (str(user_name), title, info, url))
+                          (user_name, title, info, url, format) 
+                          VALUES (?,?,?,?,?)''', (str(user_name), title, info, url, format,))
         cursor.close()
         self.connection.commit()
 

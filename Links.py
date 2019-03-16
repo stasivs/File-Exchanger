@@ -1,7 +1,6 @@
-import hashlib
+import os
 
 from Tools import *
-from DB import *
 from flask import render_template, make_response, request, redirect
 from flask import session
 from flask_restful import Resource, abort
@@ -9,7 +8,7 @@ from flask_restful import Resource, abort
 
 def abort_if_arch_not_found(url):
     if not Archives(db.get_connection()).get(url):
-        abort(404, message="Hello!")
+        return abort(404, message="Not found")
 
 
 class Archive(Resource):
@@ -17,7 +16,7 @@ class Archive(Resource):
         abort_if_arch_not_found(url)
         arch = Archives(db.get_connection()).get(url)
         return make_response(render_template("Download_template.html",
-                                             title=arch[1], info=arch[2], username=arch[4], url=url + ".txt"))
+                                             title=arch[1], info=arch[2], username=arch[5], url=(arch[3] + arch[4])))
 
     def delete(self, arch_id):
         Archives(db.get_connection()).delete(arch_id)
@@ -34,12 +33,13 @@ class MakeArchive(Resource):
         info = form.info.data
         file = form.file.data.read()
         url = str(create_url())
-        with open("static/" + url + ".txt", "wb") as f:
+        format = "." + form.file.data.filename.split(".")[-1]
+        with open("static/" + url + format, "wb") as f:
             f.write(file)
         if 'username' in session:
-            Archives(db.get_connection()).insert(title, info, url, session['username'])
+            Archives(db.get_connection()).insert(title, info, url, format, session['username'])
         else:
-            Archives(db.get_connection()).insert(title, info, url)
+            Archives(db.get_connection()).insert(title, info, url, format)
         return make_response(render_template("url.html", url=url))
 
 
@@ -62,8 +62,6 @@ class Login(Resource):
                     return redirect("/")
                 else:
                     return "S"
-            else:
-                return "A"
         else:
             return make_response(render_template('login.html', form=form))
 
