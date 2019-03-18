@@ -34,7 +34,7 @@ class MakeArchive(Resource):
         file = form.file.data.read()
         url = str(create_url())
         format = "." + form.file.data.filename.split(".")[-1]
-        with open("static/" + url + format, "wb") as f:
+        with open(os.path.abspath(os.path.join("static/", url + format)), "wb") as f:
             f.write(file)
         if 'username' in session:
             Archives(db.get_connection()).insert(title, info, url, format, session['username'])
