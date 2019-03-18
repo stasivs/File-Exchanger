@@ -60,10 +60,7 @@ class Login(Resource):
                 if temp[-1] == password_encrypt:
                     session['username'] = username.strip()
                     return redirect("/")
-                else:
-                    return "S"
-        else:
-            return make_response(render_template('login.html', form=form))
+        return make_response(render_template('login.html', form=form))
 
 
 class Registration(Resource):
