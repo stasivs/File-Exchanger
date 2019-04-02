@@ -50,55 +50,87 @@ class UserModel:
 
     def delete(self, arch_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM archives WHERE id = ?''', (str(arch_id),))
+        cursor.execute('''DELETE FROM file WHERE id = ?''', (str(arch_id),))
         cursor.close()
         self.connection.commit()
 
 
-class Archives:
+class Files:
     def __init__(self, connection):
         self.connection = connection
         self.init_table()
 
     def init_table(self):
         cursor = self.connection.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS archives 
+        cursor.execute('''CREATE TABLE IF NOT EXISTS file 
                             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                              title VARCHAR(50),
                              info VARCHAR(1000),
                              url VARCHAR(25),
                              format VARCHAR(20),
-                             user_name VARCHAR(20)
+                             user_name VARCHAR(20),
+                             folder VARCHAR(15)
                              )''')
         cursor.close()
         self.connection.commit()
 
-    def insert(self, title, info, url, format, user_name=None,):
+    def insert(self, title, info, url, format, user_name=None, folder=None):
         cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO archives 
-                          (user_name, title, info, url, format) 
-                          VALUES (?,?,?,?,?)''', (str(user_name), title, info, url, format,))
+        cursor.execute('''INSERT INTO file 
+                          (user_name, title, info, url, format, folder) 
+                          VALUES (?,?,?,?,?,?)''', (str(user_name), title, info, url, format, folder))
         cursor.close()
         self.connection.commit()
 
     def get(self, arch_url):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM archives WHERE url = ?", (arch_url,))
+        cursor.execute("SELECT * FROM file WHERE url = ?", (arch_url,))
         row = cursor.fetchone()
         return row
 
     def get_all(self, user_name):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM archives WHERE user_name = ?",
+        cursor.execute("SELECT * FROM file WHERE user_name = ?",
                        (str(user_name),))
         rows = cursor.fetchall()
         return rows
 
     def delete(self, arch_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM archives WHERE id = ?''', (str(arch_id),))
+        cursor.execute('''DELETE FROM file WHERE id = ?''', (str(arch_id),))
         cursor.close()
         self.connection.commit()
+
+
+class Folders:
+    def __init__(self, connection):
+        self.connection = connection
+        self.init_table()
+        
+    def init_table(self):
+        cursor = self.connection.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS folders 
+                            (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                             title VARCHAR(50),
+                             user_name VARCHAR(20),
+                             url VARCHAR(15)
+                             )''')
+        cursor.close()
+        self.connection.commit()
+
+    def insert(self, title, url, user_name=None):
+        cursor = self.connection.cursor()
+        cursor.execute('''INSERT INTO folders
+                          (user_name, title, url) 
+                          VALUES (?,?,?)''', (str(user_name), title, url))
+        cursor.close()
+        self.connection.commit()
+
+    def get(self, folder_url):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM folders WHERE url = ?", (folder_url,))
+        row = cursor.fetchone()
+        return row
 
 
 db = DB("DB.db")

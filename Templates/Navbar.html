@@ -9,15 +9,21 @@
   <body>
     <header>
       <nav class="navbar navbar-light bg-light">
-        <a href="/{{session['username']}} /archives">
+        <a href="/{{session['username']}} /user_files">
             <p>
                 Ваши архивы
             </p>
         </a>
 
+        <a href="/folder">
+            <p>
+                Создать ссылку на папку
+            </p>
+        </a>
+
         <a href="/">
             <p>
-                Создать новый архив
+                Создать ссылку на файл
             </p>
         </a>
         {% if "username" in session %}

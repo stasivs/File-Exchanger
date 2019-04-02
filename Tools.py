@@ -36,20 +36,6 @@ def exist_username(form, field):
         raise ValidationError(message)
 
 
-def check_password(username):
-    message = "Неверный пароль"
-
-    def _check_password(form, field):
-        password = field.data
-        password = hashlib.md5(bytes(password, "utf-8"))
-        password = password.hexdigest()
-
-        if UserModel(db.get_connection()).get(username)[2] != password:
-            raise ValidationError(message)
-
-    return _check_password
-
-
 class LoginForm(FlaskForm):
     username = StringField('Логин', validators=[DataRequired("Введите логин"), check_username])
     password = PasswordField('Пароль', validators=[DataRequired("Введите пароль")])
@@ -65,8 +51,14 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Зарегистрироваться')
 
 
-class AddArchive(FlaskForm):
+class AddFile(FlaskForm):
     title = StringField('Заголовок', validators=[Length(max=50, message="Кол-во символов не должно превышать 50")])
     info = TextAreaField('Описание', validators=[Length(max=1000, message="Кол-во символов не должно превышать 1000")])
-    file = FileField(validators=[DataRequired()])
+    file = FileField(validators=[DataRequired("Вы не выбрали файл")])
     submit = SubmitField('Добавить')
+
+
+class AddFolder(FlaskForm):
+    title = StringField('Название папки', validators=[Length(max=50, message="Кол-во символов не должно превышать 50"),
+                                                 DataRequired("Введите название папки")])
+    submit = SubmitField('Создать')

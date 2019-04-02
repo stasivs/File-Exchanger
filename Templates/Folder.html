@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
-    {% extends "Navbar.html" %}
+    {% extends "Files display.html" %}
     {% block content %}
-    <h1>Загрузите файл</h1>
-        <form method="post" enctype="multipart/form-data" action="" novalidate>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
             {{ form.hidden_tag() }}
             <p>
             {{ form.title.label }}
@@ -42,6 +42,8 @@
                 {{ form.submit() }}
             </p>
         </form>
+        <p><a href="/">Скачать архив папки</a></p>
+        <h2>Файлы, содержащиеся в папке с названием {{ title }}: </h2>
     {% endblock %}
 </body>
 </html>
