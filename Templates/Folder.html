@@ -8,7 +8,7 @@
 </head>
 <body>
     {% extends "Files display.html" %}
-    {% block content %}
+    {% block display %}
 
         <form method="post" enctype="multipart/form-data" novalidate>
             {{ form.hidden_tag() }}
@@ -42,8 +42,16 @@
                 {{ form.submit() }}
             </p>
         </form>
-        <p><a href="/">Скачать архив папки</a></p>
-        <h2>Файлы, содержащиеся в папке с названием {{ title }}: </h2>
+        <p>
+            <a href="{{ url_for('static', filename=url) }}" download>
+                <button class="alert">
+                    Скачать архив папки
+                </button>
+            </a>
+        </p>
+        <h2>
+            Файлы, содержащиеся в папке с названием {{ title }}:
+        </h2>
     {% endblock %}
 </body>
 </html>

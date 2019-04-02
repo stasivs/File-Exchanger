@@ -88,10 +88,17 @@ class Files:
         row = cursor.fetchone()
         return row
 
-    def get_all(self, user_name):
+    def get_all_solo_files(self, user_name):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM file WHERE user_name = ?",
                        (str(user_name),))
+        rows = cursor.fetchall()
+        print(rows)
+        return rows
+
+    def folder_files(self, folder_url):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM file WHERE folder = ?", (str(folder_url),))
         rows = cursor.fetchall()
         return rows
 

@@ -4,6 +4,7 @@ from Tools import *
 from flask import render_template, make_response, request, redirect
 from flask import session
 from flask_restful import Resource, abort
+from zipfile import ZipFile
 
 
 def abort_if_arch_not_found(url):
@@ -25,19 +26,16 @@ class File(Resource):
 class MakeFile(Resource):
     def get(self):
         form = AddFile()
-        print("Hi")
         return make_response(render_template("Make_Archive.html", form=form))
 
     def post(self):
         form = AddFile()
-        print(form.title.data, form.info.data, form.file.data)
-        print(form.validate_on_submit())
         if form.validate_on_submit():
             title = form.title.data
             info = form.info.data
             file = form.file.data.read()
             url = str(create_url())
-            format = "." + form.file.data.filename.split(".")[-1]
+            format = os.path.splitext(form.file.data.filename)[1]
             with open(os.path.abspath(os.path.join("static/", url + format)), "wb") as f:
                 f.write(file)
             if 'username' in session:
@@ -96,7 +94,7 @@ class MyFiles(Resource):
     def get(self, username):
         username = username.strip()
         if 'username' in session and session['username'] == username:
-            archive_list = Files(db.get_connection()).get_all(username)
+            archive_list = Files(db.get_connection()).get_all_solo_files(username)
             return make_response(render_template("User_File.html",
                                                  archive_list=archive_list))
         else:
@@ -108,19 +106,25 @@ class Folder(Resource):
         row = Folders(db.get_connection()).get(folder_url)
         title = row[1]
         form = AddFile()
-        return make_response(render_template("Folder.html", form=form, title=title))
+        archive_list = Files(db.get_connection()).folder_files(folder_url)
+        return make_response(render_template("Folder.html", form=form, title=title, archive_list=archive_list,
+                                             url=folder_url + ".zip"))
 
     def post(self, folder_url):
         form = AddFile()
-        title = form.title.data
-        info = form.info.data
-        file = form.file.data.read()
-        url = str(create_url())
-        format = "." + form.file.data.filename.split(".")[-1]
-        with open(os.path.abspath(os.path.join("static/", url + format)), "wb") as f:
-            f.write(file)
-        Files(db.get_connection()).insert(title, info, url, format, session['username'], folder_url)
-        return make_response(render_template("Folder.html", form=form))
+        if form.validate_on_submit():
+            title = form.title.data
+            info = form.info.data
+            file = form.file.data.read()
+            url = str(create_url())
+            format = os.path.splitext(form.file.data.filename)[1]
+            with open(os.path.abspath(os.path.join("static/", url + format)), "wb") as f:
+                f.write(file)
+            Files(db.get_connection()).insert(title, info, url, format, session['username'], folder_url)
+            with ZipFile(os.path.abspath(os.path.join("static/", "{}.zip".format(folder_url))), "w") as archive:
+                for file in Files(db.get_connection()).folder_files(folder_url):
+                    archive.write("static/{}{}".format(file[3], file[4]))
+        return redirect("/{}/folder_files".format(folder_url))
 
 
 class MakeFolder(Resource):
