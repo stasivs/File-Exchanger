@@ -94,9 +94,10 @@ class MyFiles(Resource):
     def get(self, username):
         username = username.strip()
         if 'username' in session and session['username'] == username:
-            archive_list = Files(db.get_connection()).get_all_solo_files(username)
+            archive_list = Files(db.get_connection()).get_all_user_solo_files(username)
+            folders = Folders(db.get_connection()).get_all_user_folders(username)
             return make_response(render_template("User_File.html",
-                                                 archive_list=archive_list))
+                                                 archive_list=archive_list, folders=folders))
         else:
             return redirect("/")
 
@@ -105,10 +106,11 @@ class Folder(Resource):
     def get(self, folder_url):
         row = Folders(db.get_connection()).get(folder_url)
         title = row[1]
+        username = row[2]
         form = AddFile()
         archive_list = Files(db.get_connection()).folder_files(folder_url)
         return make_response(render_template("Folder.html", form=form, title=title, archive_list=archive_list,
-                                             url=folder_url + ".zip"))
+                                             url=folder_url + ".zip", username=username))
 
     def post(self, folder_url):
         form = AddFile()

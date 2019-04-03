@@ -88,13 +88,15 @@ class Files:
         row = cursor.fetchone()
         return row
 
-    def get_all_solo_files(self, user_name):
+    def get_all_user_solo_files(self, user_name):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM file WHERE user_name = ?",
+        cursor.execute("SELECT * FROM file WHERE user_name = ? AND folder is null",
                        (str(user_name),))
         rows = cursor.fetchall()
-        print(rows)
         return rows
+
+    def get_all_user_dirs(self, user_name):
+        pass
 
     def folder_files(self, folder_url):
         cursor = self.connection.cursor()
@@ -139,5 +141,11 @@ class Folders:
         row = cursor.fetchone()
         return row
 
+    def get_all_user_folders(self, user_name):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM folders WHERE user_name = ?",
+                       (str(user_name),))
+        rows = cursor.fetchall()
+        return rows
 
 db = DB("DB.db")

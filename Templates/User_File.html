@@ -11,9 +11,24 @@
 
 {% block display %}
     <h2>
-        Архивы пользователя {{session['username']}}:
+        Файлы пользователя {{session['username']}}:
     </h2>
 {% endblock %}
-
+{% block folders %}
+    <h2>
+        Папки пользователя {{session['username']}}:
+    </h2>
+    <ol>
+    {% for folder in folders %}
+        <li>
+            <p> Папка с названием:
+                <a href="/{{ folder[3] }}/folder_files">
+                    {{ folder[1] }}
+                </a>
+            </p>
+        </li>
+    {% endfor %}
+    </ol>
+{% endblock %}
 </body>
 </html>
