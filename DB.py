@@ -148,4 +148,5 @@ class Folders:
         rows = cursor.fetchall()
         return rows
 
+
 db = DB("DB.db")
