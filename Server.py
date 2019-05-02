@@ -17,4 +17,4 @@ api.add_resource(MakeFolder, "/folder")
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 if __name__ == "__main__":
-    app.run("192.168.0.103", 8080, debug=True)
+    app.run("127.0.0.1", 8080, debug=True)
