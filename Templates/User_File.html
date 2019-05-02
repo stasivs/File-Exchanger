@@ -1,34 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Title</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
-<body>
 {% extends "Files display.html" %}
 
 {% block display %}
-    <h2>
-        Файлы пользователя {{session['username']}}:
-    </h2>
+<h2>
+    Файлы пользователя {{session['username']}}:
+</h2>
 {% endblock %}
 {% block folders %}
-    <h2>
-        Папки пользователя {{session['username']}}:
-    </h2>
-    <ol>
+<h2>
+    Папки пользователя {{session['username']}}:
+</h2>
+<ol>
     {% for folder in folders %}
-        <li>
-            <p> Папка с названием:
-                <a href="/{{ folder[3] }}/folder_files">
-                    {{ folder[1] }}
-                </a>
-            </p>
-        </li>
+    <li>
+        <p> Папка с названием:
+            <a href="/{{ folder[3] }}/folder_files">
+                {{ folder[1] }}
+            </a>
+        </p>
+    </li>
     {% endfor %}
-    </ol>
+</ol>
 {% endblock %}
-</body>
-</html>

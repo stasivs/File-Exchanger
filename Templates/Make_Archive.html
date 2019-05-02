@@ -1,47 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Title</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
-<body>
-    {% extends "Navbar.html" %}
-    {% block content %}
-    <h1>Загрузите файл</h1>
-        <form method="post" enctype="multipart/form-data" action="" novalidate>
-            {{ form.hidden_tag() }}
-            <p>
-            {{ form.title.label }}
-            {{ form.title }}
-            {% for error in form.title.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
-            </p>
-            <p>
-                {{ form.info.label }}
-                {{ form.info }}
-                {% for error in form.info.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.file }}
-                {% for error in form.file.errors %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ error }}
-                    </div>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.submit() }}
-            </p>
-        </form>
-    {% endblock %}
-</body>
-</html>
+{% extends "Navbar.html" %}
+{% block content %}
+<h1>Загрузите файл</h1>
+<form method="post" enctype="multipart/form-data" action="" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.title.label }}
+        {{ form.title }}
+        {% for error in form.title.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>
+        {{ form.info.label }}
+        {{ form.info }}
+        {% for error in form.info.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>
+        {{ form.file }}
+        {% for error in form.file.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>
+        {{ form.submit() }}
+    </p>
+</form>
+{% endblock %}
