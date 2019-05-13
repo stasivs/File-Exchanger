@@ -1,6 +1,6 @@
 import os
 
-from Tools import *
+from tools import *
 from flask import render_template, make_response, request, redirect
 from flask import session
 from flask_restful import Resource, abort
@@ -16,7 +16,7 @@ class File(Resource):
     def get(self, url):
         abort_if_arch_not_found(url)
         arch = Files(db.get_connection()).get(url)
-        return make_response(render_template("Download_template.html",
+        return make_response(render_template("download_template.html",
                                              title=arch[1], info=arch[2], username=arch[5], url=(arch[3] + arch[4])))
 
     def delete(self, arch_id):
@@ -26,7 +26,7 @@ class File(Resource):
 class MakeFile(Resource):
     def get(self):
         form = AddFile()
-        return make_response(render_template("Make_Archive.html", form=form))
+        return make_response(render_template("make_archive.html", form=form))
 
     def post(self):
         form = AddFile()
@@ -44,13 +44,13 @@ class MakeFile(Resource):
                 Files(db.get_connection()).insert(title, info, url, format)
             return make_response(render_template("url.html", url=url))
         else:
-            return make_response(render_template("Make_Archive.html", form=form))
+            return make_response(render_template("make_archive.html", form=form))
 
 
 class Login(Resource):
     def get(self):
         form = LoginForm()
-        return make_response(render_template("Login.html", form=form))
+        return make_response(render_template("login.html", form=form))
 
     def post(self):
         form = LoginForm()
@@ -70,7 +70,7 @@ class Login(Resource):
 class Registration(Resource):
     def get(self):
         form = RegistrationForm()
-        return make_response(render_template("Registration.html", form=form))
+        return make_response(render_template("registration.html", form=form))
 
     def post(self):
         form = RegistrationForm()
@@ -81,7 +81,7 @@ class Registration(Resource):
             password_encrypt = password_encrypt.hexdigest()
             UserModel(db.get_connection()).insert(username, password_encrypt)
             return redirect("/")
-        return make_response(render_template('Registration.html', form=form))
+        return make_response(render_template('registration.html', form=form))
 
 
 class Logout(Resource):
@@ -96,7 +96,7 @@ class MyFiles(Resource):
         if 'username' in session and session['username'] == username:
             archive_list = Files(db.get_connection()).get_all_user_solo_files(username)
             folders = Folders(db.get_connection()).get_all_user_folders(username)
-            return make_response(render_template("User_File.html",
+            return make_response(render_template("user_file.html",
                                                  archive_list=archive_list, folders=folders))
         else:
             return redirect("/")
@@ -109,7 +109,7 @@ class Folder(Resource):
         username = row[2]
         form = AddFile()
         archive_list = Files(db.get_connection()).folder_files(folder_url)
-        return make_response(render_template("Folder.html", form=form, title=title, archive_list=archive_list,
+        return make_response(render_template("folder.html", form=form, title=title, archive_list=archive_list,
                                              url=folder_url + ".zip", username=username))
 
     def post(self, folder_url):
@@ -133,7 +133,7 @@ class MakeFolder(Resource):
     def get(self):
         if 'username' in session:
             form = AddFolder()
-            return make_response(render_template("Make_folder.html", form=form))
+            return make_response(render_template("make_folder.html", form=form))
         else:
             return redirect("/login")
 

@@ -95,9 +95,6 @@ class Files:
         rows = cursor.fetchall()
         return rows
 
-    def get_all_user_dirs(self, user_name):
-        pass
-
     def folder_files(self, folder_url):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM file WHERE folder = ?", (str(folder_url),))
@@ -149,4 +146,4 @@ class Folders:
         return rows
 
 
-db = DB("DB.db")
+db = DB("db.db")

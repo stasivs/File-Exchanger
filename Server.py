@@ -1,5 +1,5 @@
 from flask import Flask, url_for
-from Links import *
+from links import *
 from flask_restful import Api
 
 app = Flask(__name__)

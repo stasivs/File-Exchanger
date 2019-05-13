@@ -1,7 +1,7 @@
 import random
 import hashlib
 
-from DB import *
+from db import *
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, FileField
 from wtforms.validators import DataRequired, EqualTo, ValidationError, Length
@@ -17,8 +17,6 @@ def create_url(len=25):
 alphabet = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 for i in range(ord("a"), ord("z") + 1):
     alphabet.append(chr(i))
-    alphabet.append(chr(i).upper())
-
 
 def check_username(form, field):
     message = "Неверный логин"
